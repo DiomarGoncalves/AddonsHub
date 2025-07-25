@@ -1,4 +1,8 @@
-const API_BASE_URL = 'http://localhost:3001/api';
+// Detecta ambiente e define a base da API corretamente
+const API_BASE_URL =
+  typeof window !== 'undefined' && window.location.hostname === 'localhost'
+    ? 'http://localhost:3001/api'
+    : '/api';
 
 interface ApiResponse<T> {
   data?: T;
