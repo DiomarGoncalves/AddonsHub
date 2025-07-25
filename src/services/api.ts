@@ -20,12 +20,22 @@ class ApiService {
   }
 
   private async handleResponse<T>(response: Response): Promise<T> {
-    const data = await response.json();
-    
+    let data: any;
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      // Tenta ler como texto para debug
+      const text = await response.text();
+      throw new Error(
+        `Resposta inesperada do servidor: ${text.slice(0, 100)}`
+      );
+    }
+
     if (!response.ok) {
       throw new Error(data.error || 'Something went wrong');
     }
-    
+
     return data;
   }
 
