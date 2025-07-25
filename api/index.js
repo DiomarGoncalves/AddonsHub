@@ -51,9 +51,9 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Exporta handler para Vercel
+// Exporta handler para Vercel (ESM)
 if (process.env.VERCEL) {
-  module.exports = app;
+  export default app;
 } else {
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
