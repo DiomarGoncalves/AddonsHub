@@ -5,12 +5,11 @@ import { useAuth } from '../contexts/AuthContext';
 import { AddonCategory, CATEGORY_LABELS, DownloadLink } from '../types';
 import { apiService } from '../services/api';
 
-const UploadAddon: React.FC = ({ editMode = false }: { editMode?: boolean }) => {
+const UploadAddon: React.FC<{ editMode?: boolean }> = ({ editMode = false }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState(false);
-  const [addonData, setAddonData] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -26,12 +25,28 @@ const UploadAddon: React.FC = ({ editMode = false }: { editMode?: boolean }) => 
     }
   }, [user, navigate]);
 
+  // Preenche o formulário ao editar
   useEffect(() => {
     if (editMode && id) {
-      // Buscar dados do addon para edição
-      // Exemplo: apiService.getAddon(id).then(setAddonData);
+      setIsLoading(true);
+      apiService.getAddon(id)
+        .then((addon) => {
+          setFormData({
+            title: addon.title || '',
+            description: addon.description || '',
+            category: addon.category || 'other',
+            version: addon.version || '1.0.0',
+            images: addon.images && addon.images.length > 0 ? addon.images : [''],
+            downloadLinks: addon.downloadLinks && addon.downloadLinks.length > 0 ? addon.downloadLinks : [{ name: '', url: '' }],
+          });
+        })
+        .catch(() => {
+          alert('Erro ao carregar dados do addon.');
+          navigate('/dashboard');
+        })
+        .finally(() => setIsLoading(false));
     }
-  }, [editMode, id]);
+  }, [editMode, id, navigate]);
 
   // Use addonData para preencher o formulário se editMode for true
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -111,18 +126,21 @@ const UploadAddon: React.FC = ({ editMode = false }: { editMode?: boolean }) => 
         return;
       }
 
-      // Create addon via API
       const addonData = {
         title: formData.title,
         description: formData.description,
         category: formData.category,
         version: formData.version,
-        images: validImages,
-        downloadLinks: validDownloadLinks,
+        images: formData.images.filter(img => img.trim() !== ''),
+        downloadLinks: formData.downloadLinks.filter(link => link.name.trim() !== '' && link.url.trim() !== ''),
       };
 
-      await apiService.createAddon(addonData);
-      
+      if (editMode && id) {
+        await apiService.updateAddon(id, addonData);
+      } else {
+        await apiService.createAddon(addonData);
+      }
+
       // Redirecionar para o painel
       navigate('/dashboard');
       
