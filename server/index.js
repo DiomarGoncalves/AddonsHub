@@ -53,7 +53,7 @@ app.use((req, res) => {
 
 // Exporta handler para Vercel
 if (process.env.VERCEL) {
-  export default app;
+  module.exports = app;
 } else {
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
