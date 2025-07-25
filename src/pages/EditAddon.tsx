@@ -1,13 +1,9 @@
 import React from 'react';
+import UploadAddon from './UploadAddon';
 
 const EditAddon = () => {
-  return (
-    <div className="container mx-auto py-8">
-      <h1 className="text-2xl font-bold mb-4">Editar Addon</h1>
-      {/* Implemente o formulário de edição aqui */}
-      <p>Formulário de edição do addon.</p>
-    </div>
-  );
+  // Você pode passar uma prop "editMode" ou "addonId" para o formulário, se necessário
+  return <UploadAddon editMode />;
 };
 
 export default EditAddon;

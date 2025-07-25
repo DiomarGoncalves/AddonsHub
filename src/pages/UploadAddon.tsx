@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Upload, Plus, X, Link as LinkIcon, Image as ImageIcon } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { AddonCategory, CATEGORY_LABELS, DownloadLink } from '../types';
 import { apiService } from '../services/api';
 
-const UploadAddon: React.FC = () => {
+const UploadAddon: React.FC = ({ editMode = false }: { editMode?: boolean }) => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState(false);
+  const [addonData, setAddonData] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -18,12 +20,20 @@ const UploadAddon: React.FC = () => {
     downloadLinks: [{ name: '', url: '' }] as DownloadLink[],
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!user) {
       navigate('/login');
     }
   }, [user, navigate]);
 
+  useEffect(() => {
+    if (editMode && id) {
+      // Buscar dados do addon para edição
+      // Exemplo: apiService.getAddon(id).then(setAddonData);
+    }
+  }, [editMode, id]);
+
+  // Use addonData para preencher o formulário se editMode for true
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setFormData(prev => ({
       ...prev,
@@ -136,8 +146,8 @@ const UploadAddon: React.FC = () => {
             <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Upload className="w-8 h-8 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">Upload de Addon</h1>
-            <p className="text-gray-300">Compartilhe seu addon com a comunidade</p>
+            <h1 className="text-3xl font-bold text-white mb-2">{editMode ? 'Editar Addon' : 'Upload de Addon'}</h1>
+            <p className="text-gray-300">{editMode ? 'Edite os detalhes do seu addon' : 'Compartilhe seu addon com a comunidade'}</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">
