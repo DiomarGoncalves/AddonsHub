@@ -9,6 +9,7 @@ import AddonDetails from './pages/AddonDetails';
 import UploadAddon from './pages/UploadAddon';
 import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
+import EditAddon from './pages/EditAddon';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/addon/:id" element={<AddonDetails />} />
+              <Route path="/addon/:id/edit" element={<EditAddon />} />
               <Route path="/upload" element={<UploadAddon />} />
               <Route path="/profile/:userId" element={<Profile />} />
               <Route path="/dashboard" element={<Dashboard />} />
