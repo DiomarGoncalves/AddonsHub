@@ -51,10 +51,11 @@ app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Exporta handler para Vercel (ESM)
-if (process.env.VERCEL) {
-  export default app;
-} else {
+// Sempre exporta para Vercel (ESM)
+export default app;
+
+// Só roda localmente
+if (!process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📊 Environment: ${process.env.NODE_ENV}`);
